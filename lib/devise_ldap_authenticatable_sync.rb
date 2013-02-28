@@ -1,0 +1,2 @@
+module DeviseLdapAuthenticatableSync
+end
