@@ -4,7 +4,7 @@ module Devise
       extend ActiveSupport::Concern
 
       included do
-        after_create :create_ldap_reference if ::Devise.ldap_sync_registrations
+        before_create :create_ldap_reference if ::Devise.ldap_sync_registrations
       end
 
       def create_ldap_reference
