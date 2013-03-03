@@ -28,20 +28,15 @@ module Devise
               raise ::DeviseLdapAuthenticatable::LdapException, "Cannot connect to admin LDAP user"
             elsif ::Devise.ldap_use_admin_to_bind
 
-              #TODO: these attributes should be configurable
-              root_entry = "customers"
-              user_name = "Some User"
-              object_classes = ["top","simplesecurityobject","inetorgperson"]
-
               attr = {  :cn => @login,
-                        :ou =>root_entry,
-                        :objectclass => object_classes,
+                        :ou =>::Devise.ldap_sync_root_entry,
+                        :objectclass => ::Devise.ldap_sync_object_classes,
                         :mail => @login,
-                        :sn => user_name,
+                        :sn => ::Devise.ldap_sync_default_sn,
                         :userpassword => Net::LDAP::Password.generate(:sha, @password)
               }
 
-              unless privileged_ldap.add(:dn => "cn=#{@login}, cn=#{root_entry}, #{privileged_ldap.base}", :attributes => attr)
+              unless privileged_ldap.add(:dn => "cn=#{@login}, cn=#{::Devise.ldap_sync_root_entry}, #{privileged_ldap.base}", :attributes => attr)
                 raise ::DeviseLdapAuthenticatable::LdapException, "Unable to add user LDAP Error: #{privileged_ldap.get_operation_result} \n Attr Dump: #{attr}"
               end
             end
